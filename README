@@ -1,6 +1,6 @@
-This library provides a framework for type-directed composition of value
-editors.  For a fuller description and link to documentation, please see
-the Haskell wiki page:
+The DeepArrow library provides a framework for type-directed composition
+of value editors.  For a fuller description and link to documentation,
+please see the Haskell wiki page:
 
   http://haskell.org/haskellwiki/DeepArrow
 

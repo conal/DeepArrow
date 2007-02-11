@@ -76,11 +76,11 @@ defaults do not use 'arr'.
 -}
 
 class Arrow (~>) => DeepArrow (~>) where
-  -- | Apply arrow in a function's result.  Analogous to 'first' and
+  -- | Direct arrow into a function's result.  Analogous to 'first' and
   -- 'second'.
   result :: (b ~> b') -> ((a->b) ~> (a->b'))
   -- Complicates OFun considerably and not used.
-  -- Apply arrow in a function's argument.  Note contravariance.
+  -- Direct arrow into a function's argument.  Note contravariance.
   -- argument :: (a' ~> a ) -> ((a->b) ~> (a'->b))
   -- | Identity.
   idA :: a ~> a

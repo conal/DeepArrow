@@ -2,7 +2,7 @@
 
 ----------------------------------------------------------------------
 -- |
--- Module      :  Examples
+-- Module      :  Control.Arrow.DeepArrow.Examples
 -- Copyright   :  (c) Conal Elliott 2007
 -- License     :  LGPL
 -- 
@@ -20,7 +20,7 @@ module Control.Arrow.DeepArrow.Examples
   -- * Deep application
     deep
   -- * Function extraction
-  , extF
+  , extF, extFF
   -- * Input etraction
   , extI, extFI
   ) where
