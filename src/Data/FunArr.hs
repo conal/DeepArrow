@@ -1,4 +1,4 @@
-{-# OPTIONS -fglasgow-exts -fallow-undecidable-instances #-}
+{-# LANGUAGE TypeOperators, MultiParamTypeClasses, FunctionalDependencies #-}
 
 ----------------------------------------------------------------------
 -- |
@@ -15,39 +15,49 @@
 
 module Data.FunArr
   (
-  FunArr(..), wapl
+  FunArr(..) -- , wapl
   ) where
 
-import Control.Monad.Identity
-import Data.Tupler
+-- import Control.Monad.Identity
+
+import Control.Compose
 
 infixr 0  $$  -- FunArr application
 
 -- | Convert between an arrow value and a \"wrapped function\".  The \"arrow\"
 -- doesn't really have to be an arrow.  I'd appreciate ideas for names &
 -- uses.
-class FunArr (~>) w | (~>)->w, w->(~>) where
+class FunArr (~>) w | (~>)->w , w->(~>) where
   -- | Convert a @w@-wrapped function to an arrow value
   toArr :: w (a->b) -> (a ~> b)
   -- | Apply an arrow to a @w@-wrapped value
   ($$)  :: (a ~> b) -> w a -> w b
 
--- | Apply a wrapped function to a wrapped value
-wapl :: FunArr (~>) w => w (a->b) -> w a -> w b
-wapl f a = toArr f $$ a
+-- -- | Apply a wrapped function to a wrapped value
+-- wapl :: FunArr (~>) w => w (a->b) -> w a -> w b
+-- wapl f a = toArr f $$ a
+
+-- The type of wapl matches <*> from Control.Applicative.  What about
+-- "pure" from the Applicative class, with type a -> w a?
 
 -- Function/Id instance
-instance FunArr (->) Identity where
-  toArr = runIdentity
-  f $$ ida = return (f (runIdentity ida))
-  -- ($$) f = return . f . runIdentity
+instance FunArr (->) Id where
+  toArr (Id f) = f
+  f $$ Id a    = Id (f a)
+
+-- -- Oops!  This instance can't work with the mutual functional
+-- dependencies.  Instead, instantiate it per @h@.
+-- instance FunArr (FunA h) h where
+--   toArr = error "toArr: undefined for FunArr" --  Add FunArrable class & delegate
+--   FunA f $$ ha = f ha
+
 
 -- The following instance violates the "coverage condition" and so
 -- requires -fallow-undecidable-instances.
 
 instance (FunArr ar w, FunArr ar' w')
-      => FunArr (Pair2 ar ar') (Pair1 w w') where
-  toArr (Pair1 (f,f'))         = Pair2 (toArr f, toArr f')
-  Pair2 (f,f') $$ Pair1 (w,w') = Pair1 (f $$ w, f' $$ w')
+    => FunArr (ar ::*:: ar') (w :*: w') where
+  toArr (Prod (f,f'))         = Prodd (toArr f, toArr f')
+  Prodd (f,f') $$ Prod (w,w') = Prod (f $$ w, f' $$ w')
 
 

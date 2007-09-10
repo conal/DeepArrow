@@ -1,4 +1,4 @@
-{-# OPTIONS -fglasgow-exts #-}
+{-# LANGUAGE TypeOperators #-}
 
 ----------------------------------------------------------------------
 -- |
@@ -23,13 +23,16 @@ module Control.Arrow.DeepArrow
   , inpF, inpS, inpFirst, inpSecond
   -- * Misc functions
   , flipA, unzipA
+  -- * 'DeepArrow' instance helper
+  , FunDble(..)
   -- * Some utilities
   , (->|)
   ) where
 
 import Control.Arrow
 
-import Data.Tupler (Pair2(..))
+import Control.Compose ((::*::)(..),inProdd,FunA(..),inFunA, FunAble)
+
 import Data.FunArr
 
 
@@ -120,15 +123,15 @@ class Arrow (~>) => DeepArrow (~>) where
 
 -- | Promote a function extractor into one that reaches into the first
 -- element of a pair.
-funFirst   :: DeepArrow (~>) => (d ~> (c->a)) -> ((d, b) ~> (c->(a, b)))
+funFirst   :: DeepArrow (~>) => (a ~> (d->a')) -> ((a,b) ~> (d->(a',b)))
 
 -- | Promote a function extractor into one that reaches into the second
 -- element of a pair.
-funSecond  :: DeepArrow (~>) => (d ~> (c->b)) -> ((a, d) ~> (c->(a, b)))
+funSecond  :: DeepArrow (~>) => (b ~> (d->b')) -> ((a,b) ~> (d->(a,b')))
 
 -- | Promote a function extractor into one that reaches into the result
 -- element of a function.
-funResult  :: DeepArrow (~>) => (d ~> (c->b)) -> ((a->d) ~> (c->(a->b)))
+funResult  :: DeepArrow (~>) => (b ~> (d->b')) -> ((a->b) ~> (d->(a->b')))
 
 funFirst  h = first  h >>> funF
 funSecond h = second h >>> funS
@@ -148,20 +151,20 @@ inpS :: DeepArrow (~>) => ((a,b) -> c) ~> (b -> (a->c))
 inpS = curryA >>> flipA
 
 
--- Given a way to extract a @d@ input from an @a@ input, leaving an @a'@
+-- | Given a way to extract a @d@ input from an @a@ input, leaving an @a'@
 -- residual input, 'inpFirst' yields a way to extract a @d@ input from an
 -- @(a,b)@ input, leaving an @(a',b)@ residual input.
 inpFirst   ::  DeepArrow (~>) =>
                (( a   ->c) ~> (d -> ( a'   ->c)))
            ->  (((a,b)->c) ~> (d -> ((a',b)->c)))
 
--- Analogous to 'inpFirst'.
+-- | Analogous to 'inpFirst'.
 inpSecond  ::  DeepArrow (~>) =>
                ((   b ->c) ~> (d -> (   b' ->c)))
            ->  (((a,b)->c) ~> (d -> ((a,b')->c)))
 
 
--- See ICFP submission for the derivation of inpFirst and inpSecond
+-- See ICFP 07 paper for the derivation of inpFirst and inpSecond
 
 inpFirst  h =  curryA >>> flipA >>> result h >>> flipA >>>
                result (flipA>>>uncurryA)
@@ -204,36 +207,69 @@ instance DeepArrow (->) where
   lAssocA  = arr (\ (a,(b,c)) -> ((a,b),c))
   rAssocA  = arr (\ ((a,b),c) -> (a,(b,c)))
 
+-- DeepArrow "pairs" are deep arrows
 
--- Arrow "pairs" are arrows
-instance (Arrow f, Arrow f') => Arrow (Pair2 f f') where
-  arr h                         = Pair2 (arr h   , arr h    )
-  Pair2 (f,f') >>> Pair2 (g,g') = Pair2 (f>>>g   , f'>>>g'  )
-  first  (Pair2 (f,f'))         = Pair2 (first f , first f' )
-  second (Pair2 (f,f'))         = Pair2 (second f, second f')
-  Pair2 (f,f') *** Pair2 (g,g') = Pair2 (f***g   , f'***g'  )
-  Pair2 (f,f') &&& Pair2 (g,g') = Pair2 (f&&&g   , f'&&&g'  )
+instance (DeepArrow ar, DeepArrow ar') => DeepArrow (ar ::*:: ar') where
+  idA      = Prodd (idA,      idA)
+  dupA     = Prodd (dupA,     dupA)
+  fstA     = Prodd (fstA,     fstA)
+  sndA     = Prodd (sndA,     sndA)
+  funF     = Prodd (funF,     funF)
+  funS     = Prodd (funS,     funS)
+  funR     = Prodd (funR,     funR)
+  curryA   = Prodd (curryA,   curryA)
+  uncurryA = Prodd (uncurryA, uncurryA)
+  swapA    = Prodd (swapA,    swapA)
+  lAssocA  = Prodd (lAssocA,  lAssocA)
+  rAssocA  = Prodd (rAssocA,  rAssocA)
 
--- and DeepArrow "pairs" are deep arrows
+  result = inProdd (result *** result)
+  -- result   (Prodd (f,f')) = Prodd (result   f, result   f')
 
-instance (DeepArrow ar, DeepArrow ar') => DeepArrow (Pair2 ar ar') where
-  idA      = Pair2 (idA,      idA)
-  dupA     = Pair2 (dupA,     dupA)
-  fstA     = Pair2 (fstA,     fstA)
-  sndA     = Pair2 (sndA,     sndA)
-  funF     = Pair2 (funF,     funF)
-  funS     = Pair2 (funS,     funS)
-  funR     = Pair2 (funR,     funR)
-  curryA   = Pair2 (curryA,   curryA)
-  uncurryA = Pair2 (uncurryA, uncurryA)
-  swapA    = Pair2 (swapA,    swapA)
-  lAssocA  = Pair2 (lAssocA,  lAssocA)
-  rAssocA  = Pair2 (rAssocA,  rAssocA)
+  -- composeA = Prodd (composeA, composeA)
+  -- argument (Prodd (f,f')) = Prodd (argument f, argument f')
 
-  result   (Pair2 (f,f')) = Pair2 (result   f, result   f')
 
-  -- composeA = Pair2 (composeA, composeA)
-  -- argument (Pair2 (f,f')) = Pair2 (argument f, argument f')
+-- | Support needed for a 'FunA' to be a 'DeepArrow' (as 'FunAble' serves
+-- 'Arrow').
+class FunAble h => FunDble h where
+  resultFun   :: (h b -> h b') -> (h (a->b) -> h (a->b'))
+  dupAFun     :: h a -> h (a,a)
+  fstAFun     :: h (a,b) -> h a
+  sndAFun     :: h (a,b) -> h b
+  funFFun     :: h (c->a, b) -> h (c->(a,b))
+  funSFun     :: h (a, c->b) -> h (c->(a,b))
+  funRFun     :: h (a->c->b) -> h (c->a->b)
+  curryAFun   :: h ((a,b)->c) -> h (a->b->c)
+  uncurryAFun :: h (a->b->c)  -> h ((a,b)->c)
+  swapAFun    :: h (a,b) -> h (b,a)
+  lAssocAFun  :: h (a,(b,c)) -> h ((a,b),c)
+  rAssocAFun  :: h ((a,b),c) -> h (a,(b,c))
+
+
+instance FunDble h => DeepArrow (FunA h) where
+  result   = inFunA resultFun
+  idA      = FunA id
+  dupA     = FunA dupAFun
+  fstA     = FunA fstAFun
+  sndA     = FunA sndAFun
+  funF     = FunA funFFun
+  funS     = FunA funSFun
+  funR     = FunA funRFun
+  curryA   = FunA curryAFun
+  uncurryA = FunA uncurryAFun
+  swapA    = FunA swapAFun
+  lAssocA  = FunA lAssocAFun
+  rAssocA  = FunA rAssocAFun
+
+--   (>>>)  = inFunA2 (>>>)
+--   first  = inFunA  firstFun
+--   second = inFunA  secondFun
+--   (***)  = inFunA2 (***%)
+--   (&&&)  = inFunA2 (&&&%)
+
+
+
 
 
 {----------------------------------------------------------
@@ -241,7 +277,6 @@ instance (DeepArrow ar, DeepArrow ar') => DeepArrow (Pair2 ar ar') where
 ----------------------------------------------------------}
 
 -- | Compose wrapped functions
-(->|) :: (DeepArrow (~>), FunArr (~>) w) =>
-        w (a->b) -> w (b->c) -> w (a->c)
+(->|) :: (DeepArrow (~>), FunArr (~>) w)
+      => w (a->b) -> w (b->c) -> w (a->c)
 (->|) f g = result (toArr g) $$ f
-

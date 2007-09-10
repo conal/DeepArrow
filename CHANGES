@@ -1,2 +1,20 @@
-Version 0.1.1:
-* Changed all files to *nix-style line endings.
+% [DeepArrow](http://haskell.org/haskellwiki/DeepArrow) changes
+
+## Version 0.1 ##
+
++  Removed `Data.Tupler`.  Replaced `Pair1` & `Pair2` by `(:*:)` and `(::*::)` in
+   `Control.Compose` from [TypeCompose].
++  `FunD` and `FunDble`, for convenient Arrow definitions.  See also `FunA` &
+   `FunAble` in [TypeCompose].
+
+## Version 0.0.2 ##
+
++  Haddock comments for inpFirst & inpSecond
++  Moved the orphan Arrow instance of Pair2 from Control.Arrow.DeepArrow to
+   Data.Tupler.
+
+## Version 0.0.1 ##
+
++  Changed all files to *nix-style line endings.
+
+ [TypeCompose]: http://haskell.org/haskellwiki/TypeCompose
