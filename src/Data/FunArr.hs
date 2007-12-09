@@ -1,7 +1,6 @@
--- {-# LANGUAGE TypeOperators, MultiParamTypeClasses,
--- FunctionalDependencies #-}
--- Temp, for ghc 6.6 compatibility
-{-# OPTIONS -fglasgow-exts #-}
+{-# LANGUAGE TypeOperators, MultiParamTypeClasses, FunctionalDependencies #-}
+-- For ghc 6.6 compatibility
+-- {-# OPTIONS -fglasgow-exts -fallow-undecidable-instances #-}
 
 ----------------------------------------------------------------------
 -- |

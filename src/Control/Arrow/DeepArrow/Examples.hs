@@ -1,6 +1,6 @@
--- {-# LANGUAGE TypeOperators #-}
--- Temp, for ghc 6.6 compatibility
-{-# OPTIONS -fglasgow-exts #-}
+{-# LANGUAGE TypeOperators #-}
+-- For ghc 6.6 compatibility
+-- {-# OPTIONS -fglasgow-exts #-}
 
 ----------------------------------------------------------------------
 -- |
@@ -23,7 +23,7 @@ module Control.Arrow.DeepArrow.Examples
     deep
   -- * Function extraction
   , extF, extFF
-  -- * Input etraction
+  -- * Input extraction
   , extI, extFI
   ) where
 

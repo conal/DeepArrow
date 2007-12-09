@@ -1,6 +1,6 @@
--- {-# LANGUAGE TypeOperators #-}
--- Temp, for ghc 6.6 compatibility
-{-# OPTIONS -fglasgow-exts #-}
+{-# LANGUAGE TypeOperators #-}
+-- For ghc 6.6 compatibility
+-- {-# OPTIONS -fglasgow-exts #-}
 
 ----------------------------------------------------------------------
 -- |
@@ -39,7 +39,7 @@ import Data.FunArr
 
 
 {----------------------------------------------------------
-    The "deep arrow class"
+    The "deep arrow" class
 ----------------------------------------------------------}
 
 {- | 
