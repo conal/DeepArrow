@@ -3,7 +3,7 @@
 -- |
 -- Module      :  Language.Haskell.ToHs
 -- Copyright   :  (c) Conal Elliott 2007
--- License     :  LGPL
+-- License     :  BSD3
 -- 
 -- Maintainer  :  conal@conal.net
 -- Stability   :  experimental
