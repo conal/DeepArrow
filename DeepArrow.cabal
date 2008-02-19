@@ -1,5 +1,5 @@
 Name:			DeepArrow
-Version:		0.1
+Version:		0.2
 Synopsis:		Arrows for "deep application"
 Category:               Combinators, Control
 Description:
@@ -38,6 +38,7 @@ Package-Url:		http://darcs.haskell.org/packages/DeepArrow
 License:		BSD3
 Stability:		experimental
 Copyright:		(c) 2007 by Conal Elliott
+Build-type:             Simple
 Hs-Source-Dirs:		src
 Build-Depends:		base, mtl, TypeCompose>=0.2, haskell-src
 Extensions:             CPP, UndecidableInstances
