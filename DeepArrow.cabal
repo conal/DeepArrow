@@ -49,4 +49,4 @@ Exposed-Modules:
 			Language.Haskell.ToHs
 			Language.Haskell.Parens
 			Control.Arrow.DeepArrow.Examples
-ghc-options:		-O -Wall
+ghc-options:		-Wall
