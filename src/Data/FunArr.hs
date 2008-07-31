@@ -1,4 +1,6 @@
-{-# LANGUAGE TypeOperators, MultiParamTypeClasses, FunctionalDependencies #-}
+{-# LANGUAGE TypeOperators, MultiParamTypeClasses, FunctionalDependencies
+           , UndecidableInstances
+  #-}
 -- For ghc 6.6 compatibility
 -- {-# OPTIONS -fglasgow-exts -fallow-undecidable-instances #-}
 
