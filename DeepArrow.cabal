@@ -40,7 +40,7 @@ Stability:		experimental
 Copyright:		(c) 2007 by Conal Elliott
 Build-type:             Simple
 Hs-Source-Dirs:		src
-Build-Depends:		base, mtl, TypeCompose>=0.2, haskell-src
+Build-Depends:		base, mtl, TypeCompose>=0.6, haskell-src
 Extensions:             CPP, UndecidableInstances
 Exposed-Modules:        
                         Control.Arrow.DeepArrow
