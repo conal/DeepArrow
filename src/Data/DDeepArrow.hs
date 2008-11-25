@@ -35,7 +35,7 @@ import Control.Arrow
 import Language.Haskell.Syntax
 
 -- TypeCompose
-import Data.Pair (Pair(..))
+import Data.Zip (Zip(..))
 
 import Language.Haskell.ToHs
 import Control.Arrow.DeepArrow
@@ -100,9 +100,9 @@ instance DeepArrow DArrow where
 data DVal :: * -> * where
   ExpDV  :: HsExp -> DVal a
   AppDA  :: a `DArrow` b -> DVal a -> DVal b
-  PairDV :: DVal a -> DVal b -> DVal (a,b)
+  ZipDV :: DVal a -> DVal b -> DVal (a,b)
 
-instance Pair DVal where pair = PairDV
+instance Zip DVal where zip = ZipDV
 
 instance ToHsExp (DArrow a b) where
   toHsExp (Arr dvFun)     = toHsExp dvFun
@@ -127,7 +127,7 @@ instance ToHsExp (DVal a) where
   toHsExp (ExpDV expr)  = expr
   toHsExp (AppDA ar dv) = toHsExp ar `HsApp` toHsExp dv
                           -- toHsInfix (HsSymbol "$$") ar dv
-  toHsExp (PairDV a b)  = HsTuple [toHsExp a, toHsExp b]
+  toHsExp (ZipDV a b)   = HsTuple [toHsExp a, toHsExp b]
 
 
 instance FunArr DArrow DVal where
