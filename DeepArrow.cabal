@@ -37,7 +37,7 @@ Homepage:		http://haskell.org/haskellwiki/DeepArrow
 Package-Url:		http://darcs.haskell.org/packages/DeepArrow
 License:		BSD3
 Stability:		experimental
-Copyright:		(c) 2007 by Conal Elliott
+Copyright:		(c) 2007,2009 by Conal Elliott
 Build-type:             Simple
 Hs-Source-Dirs:		src
 Build-Depends:		base<5, mtl, TypeCompose>=0.6.5, haskell-src
