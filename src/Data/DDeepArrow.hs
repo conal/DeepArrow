@@ -21,6 +21,11 @@ module Data.DDeepArrow
     DArrow(..), DVal(..)
   ) where
 
+#if __GLASGOW_HASKELL__ >= 609
+import Control.Category
+import Prelude hiding ((.), id)
+#endif
+
 import Control.Arrow
 #if __GLASGOW_HASKELL__ < 610
                       hiding (pure)
@@ -61,9 +66,17 @@ data DArrow :: * -> * -> * where
  SndA     :: (a,b) `DArrow` b
  SwapA    :: (a,b) `DArrow` (b,a)
 
+#if __GLASGOW_HASKELL__ >= 609
+instance Category DArrow where
+  id  = IdA
+  (.) = flip Compose
+#endif
+
 instance Arrow DArrow where
   arr      = error "no arr/pure for DDeepArrow"
+#if __GLASGOW_HASKELL__ < 609
   (>>>)    = Compose
+#endif
   first    = First
   second   = Second
 

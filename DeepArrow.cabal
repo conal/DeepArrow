@@ -1,5 +1,5 @@
 Name:			DeepArrow
-Version:		0.3.1
+Version:		0.3.2
 Synopsis:		Arrows for "deep application"
 Category:               Combinators, Control
 Description:
@@ -16,8 +16,8 @@ Description:
   * Application of deep arrows for composable interfaces in the TV library:
     <http://haskell.org/haskellwiki/TV>
   .
-  * The motivating idea and paper "Functional Programming by Interacting
-    with Tangible Values": <http://conal.net/papers/Eros>
+  * The motivating idea and paper "Tangible Functional Programming":
+    <http://conal.net/papers/Eros>
   .
   This page and the module documentation pages have links to colorized
   source code and to wiki pages where you can read and contribute /user
@@ -40,8 +40,7 @@ Stability:		experimental
 Copyright:		(c) 2007,2009 by Conal Elliott
 Build-type:             Simple
 Hs-Source-Dirs:		src
-Build-Depends:		base, mtl, TypeCompose>=0.2, haskell-src
-Extensions:             CPP, UndecidableInstances
+Build-Depends:		base<5, mtl, TypeCompose>=0.6.5, haskell-src
 Exposed-Modules:        
                         Control.Arrow.DeepArrow
                         Data.FunArr
