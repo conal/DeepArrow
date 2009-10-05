@@ -51,6 +51,7 @@ instance FunArr (->) Id where
 
 -- -- Oops!  This instance can't work with the mutual functional
 -- dependencies.  Instead, instantiate it per @h@.
+-- 
 -- instance FunArr (FunA h) h where
 --   toArr = error "toArr: undefined for FunArr" --  Add FunArrable class & delegate
 --   FunA f $$ ha = f ha

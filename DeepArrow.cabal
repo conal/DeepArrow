@@ -1,5 +1,5 @@
 Name:			DeepArrow
-Version:		0.3.2
+Version:		0.3.3
 Synopsis:		Arrows for "deep application"
 Category:               Combinators, Control
 Description:
@@ -40,7 +40,7 @@ Stability:		experimental
 Copyright:		(c) 2007,2009 by Conal Elliott
 Build-type:             Simple
 Hs-Source-Dirs:		src
-Build-Depends:		base<5, mtl, TypeCompose>=0.6.5, haskell-src
+Build-Depends:		base<5, mtl, TypeCompose>=0.6.7, haskell-src
 Exposed-Modules:        
                         Control.Arrow.DeepArrow
                         Data.FunArr
