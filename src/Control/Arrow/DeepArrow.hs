@@ -282,3 +282,7 @@ instance FunDble h => DeepArrow (FunA h) where
 (->|) :: (DeepArrow (~>), FunArr (~>) w)
       => w (a->b) -> w (b->c) -> w (a->c)
 (->|) f g = result (toArr g) $$ f
+
+-- -- | Pre- and post-processing
+-- (~>) :: DeepArrow (-->) => (a' --> a) -> (b --> b') -> ((a -> b) --> (a' -> b'))
+-- f ~> h = result h >>> argument f

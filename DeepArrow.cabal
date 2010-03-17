@@ -34,7 +34,7 @@ Description:
 Author:			Conal Elliott <conal@conal.net>
 Maintainer:		conal@conal.net
 Homepage:		http://haskell.org/haskellwiki/DeepArrow
-Package-Url:		http://darcs.haskell.org/packages/DeepArrow
+Package-Url:		http://code.haskell.org/~conal/code/DeepArrow
 License:		BSD3
 Stability:		experimental
 Copyright:		(c) 2007,2009 by Conal Elliott
