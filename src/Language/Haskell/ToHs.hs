@@ -1,8 +1,8 @@
-{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances #-}
 ----------------------------------------------------------------------
 -- |
 -- Module      :  Language.Haskell.ToHs
--- Copyright   :  (c) Conal Elliott 2007
+-- Copyright   :  (c) Conal Elliott 2007-2012
 -- License     :  BSD3
 -- 
 -- Maintainer  :  conal@conal.net

@@ -1,5 +1,5 @@
 Name:			DeepArrow
-Version:		0.3.3
+Version:		0.3.4
 Synopsis:		Arrows for "deep application"
 Category:               Combinators, Control
 Description:
@@ -30,14 +30,14 @@ Description:
   @a~>b@), a recent extension to GHC.  In reading the documentation and
   code, be aware that infix operators bind more tightly than @->@.
   .
-  &#169; 2007 by Conal Elliott (<http://conal.net>); BSD3 license.
+  &#169; 2007-2012 by Conal Elliott (<http://conal.net>); BSD3 license.
 Author:			Conal Elliott <conal@conal.net>
 Maintainer:		conal@conal.net
 Homepage:		http://haskell.org/haskellwiki/DeepArrow
 Package-Url:		http://code.haskell.org/~conal/code/DeepArrow
 License:		BSD3
 Stability:		experimental
-Copyright:		(c) 2007,2009 by Conal Elliott
+Copyright:		(c) 2007-2012 by Conal Elliott
 Build-type:             Simple
 Hs-Source-Dirs:		src
 Build-Depends:		base<5, mtl, TypeCompose>=0.6.7, haskell-src

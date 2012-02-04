@@ -1,6 +1,5 @@
 {-# LANGUAGE TypeOperators #-}
--- For ghc 6.6 compatibility
--- {-# OPTIONS -fglasgow-exts #-}
+{-# OPTIONS -Wall #-}
 
 ----------------------------------------------------------------------
 -- |
@@ -117,6 +116,9 @@ class Arrow (~>) => DeepArrow (~>) where
   -- I don't think this one is used.
   -- composeA :: Arrow (~~>) => (a ~~> b, b ~~> c) ~> (a ~~>c)
   -- composeA = arr (uncurry (>>>))
+
+-- TODO: eliminate idA, now that Arrow derives from Category, which has
+-- id.
 
 
 {----------------------------------------------------------
@@ -269,7 +271,6 @@ instance FunDble h => DeepArrow (FunA h) where
 --   second = inFunA  secondFun
 --   (***)  = inFunA2 (***%)
 --   (&&&)  = inFunA2 (&&&%)
-
 
 
 
