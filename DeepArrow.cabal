@@ -1,5 +1,5 @@
 Name:			DeepArrow
-Version:		0.3.4
+Version:		0.3.5
 Synopsis:		Arrows for "deep application"
 Category:               Combinators, Control
 Description:
@@ -19,16 +19,12 @@ Description:
   * The motivating idea and paper "Tangible Functional Programming":
     <http://conal.net/papers/Eros>
   .
-  This page and the module documentation pages have links to colorized
-  source code and to wiki pages where you can read and contribute /user
-  comments/.  Enjoy!
-  .
   The primary module is "Control.Arrow.DeepArrow".  Examples in
   "Control.Arrow.DeepArrow.Examples".
   .
   /Note/: Many of the type signatures use infix type operators (as in
-  @a~>b@), a recent extension to GHC.  In reading the documentation and
-  code, be aware that infix operators bind more tightly than @->@.
+  @a~>b@).  In reading the documentation and code, be aware that infix
+  operators bind more tightly than @->@.
   .
   &#169; 2007-2012 by Conal Elliott (<http://conal.net>); BSD3 license.
 Author:			Conal Elliott <conal@conal.net>
