@@ -2,6 +2,7 @@ Name:			DeepArrow
 Version:		0.3.6
 Synopsis:		Arrows for "deep application"
 Category:               Combinators, Control
+Cabal-Version:          >= 1.6
 Description:
   This library provides a framework for type-directed composition of value
   editors (non-syntactic transformations).  The tools enable \"deep function
@@ -29,19 +30,25 @@ Description:
   &#169; 2007-2012 by Conal Elliott (<http://conal.net>); BSD3 license.
 Author:			Conal Elliott <conal@conal.net>
 Maintainer:		conal@conal.net
-Homepage:		http://haskell.org/haskellwiki/DeepArrow
-Package-Url:		http://code.haskell.org/~conal/code/DeepArrow
-License:		BSD3
-Stability:		experimental
 Copyright:		(c) 2007-2012 by Conal Elliott
+Homepage:		http://haskell.org/haskellwiki/DeepArrow
+License:		BSD3
+License-File:           COPYING
+Stability:		experimental
 Build-type:             Simple
-Hs-Source-Dirs:		src
-Build-Depends:		base<5, mtl, TypeCompose>=0.9.5, haskell-src
-Exposed-Modules:        
-                        Control.Arrow.DeepArrow
-                        Data.FunArr
-                        Data.DDeepArrow
-			Language.Haskell.ToHs
-			Language.Haskell.Parens
-			Control.Arrow.DeepArrow.Examples
-ghc-options:		-Wall
+
+source-repository head
+  type:     git
+  location: git://github.com/conal/DeepArrow.git
+
+Library
+  Hs-Source-Dirs:	  src
+  Build-Depends:	  base<5, mtl, TypeCompose>=0.9.5, haskell-src
+  Exposed-Modules:        
+                          Control.Arrow.DeepArrow
+                          Data.FunArr
+                          Data.DDeepArrow
+                          Language.Haskell.ToHs
+                          Language.Haskell.Parens
+                          Control.Arrow.DeepArrow.Examples
+  ghc-options:		-Wall
