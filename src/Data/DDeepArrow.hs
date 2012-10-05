@@ -89,11 +89,13 @@ instance DeepArrow DArrow where
   uncurryA = UncurryA
   lAssocA  = LAssocA
   rAssocA  = RAssocA
-  idA      = IdA
   dupA     = DupA
   fstA     = FstA
   sndA     = SndA
   swapA    = SwapA
+
+  -- idA      = IdA
+
 
 -- | A GADT alternative to terms.  Allows generation of Haskell terms and,
 -- from there, strings and eval. 

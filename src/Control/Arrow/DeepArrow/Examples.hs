@@ -27,6 +27,10 @@ module Control.Arrow.DeepArrow.Examples
   , extI, extFI
   ) where
 
+import Prelude ()
+-- import Prelude hiding (id,(.))
+
+import Control.Category
 import Control.Arrow
 import Control.Arrow.DeepArrow
 
@@ -67,7 +71,7 @@ extF = funFirst.funResult.funSecond
 extFF :: DeepArrow (~>) =>
                (e -> (a,(c-> b)),f)
       ~> (c -> (e -> (a,     b),f))
-extFF = extF idA
+extFF = extF id
 
 
 {----------------------------------------------------------

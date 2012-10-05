@@ -30,9 +30,11 @@ module Control.Arrow.DeepArrow
   , (->|)
   ) where
 
+import Prelude hiding (id,(.))
+import Control.Category
 import Control.Arrow
 
-import Control.Compose ((::*::)(..),inProdd,FunA(..),inFunA, FunAble)
+import Control.Compose ((::*::)(..),(*::*),inProdd,FunA(..),inFunA, FunAble)
 
 import Data.FunArr
 
@@ -49,7 +51,6 @@ using 'arr', but 'arr' is not definable for some types.  If your
 implementations
 
 @
-    'idA'      = 'arr' 'id'
     'fstA'     = 'arr' 'fst'
     'dupA'     = 'arr' (\\ x -> (x,x))
     'sndA'     = 'arr' 'snd'
@@ -70,7 +71,7 @@ also to define 'arr' or 'pure' to yield an error message (rather than
 ping-ponging infinitely between them via the 'Arrow' default definitions).
 
 @
-    'second' f = 'swapA' '>>>' 'first' f '>>>' 'swapA'
+    'second' f = 'swapA' '.' 'first' f '.' 'swapA'
     f '&&&' g  = 'dupA'  '>>>' f '***' g
 @
 
@@ -86,8 +87,9 @@ class Arrow (~>) => DeepArrow (~>) where
   -- Complicates OFun considerably and not used.
   -- Direct arrow into a function's argument.  Note contravariance.
   -- argument :: (a' ~> a ) -> ((a->b) ~> (a'->b))
-  -- | Identity.
-  idA :: a ~> a
+--   -- | Identity. Unnecessary now that we have Category 
+--   idA :: a ~> a
+--   idA = id
   -- | Duplicate.
   dupA :: a ~> (a,a)
   -- | Extract first.
@@ -109,16 +111,13 @@ class Arrow (~>) => DeepArrow (~>) where
   swapA = sndA &&& fstA
   -- | Left-associate.  Has default.
   lAssocA :: (a,(b,c)) ~> ((a,b),c)
-  lAssocA = (idA***fstA) &&& (sndA>>>sndA)
+  lAssocA = second fstA &&& (sndA . sndA)
   -- | Right-associate.  Has default.
   rAssocA :: ((a,b),c) ~> (a,(b,c))
-  rAssocA = (fstA>>>fstA) &&& (sndA *** idA)
+  rAssocA = (fstA . fstA) &&& first  sndA
   -- I don't think this one is used.
   -- composeA :: Arrow (~~>) => (a ~~> b, b ~~> c) ~> (a ~~>c)
   -- composeA = arr (uncurry (>>>))
-
--- TODO: eliminate idA, now that Arrow derives from Category, which has
--- id.
 
 
 {----------------------------------------------------------
@@ -137,9 +136,9 @@ funSecond  :: DeepArrow (~>) => (b ~> (d->b')) -> ((a,b) ~> (d->(a,b')))
 -- element of a function.
 funResult  :: DeepArrow (~>) => (b ~> (d->b')) -> ((a->b) ~> (d->(a->b')))
 
-funFirst  h = first  h >>> funF
-funSecond h = second h >>> funS
-funResult h = result h >>> funR
+funFirst  h = funF . first  h
+funSecond h = funS . second h
+funResult h = funR . result h
 
 
 {----------------------------------------------------------
@@ -152,7 +151,7 @@ inpF = curryA
 
 -- | Extract the second component of a pair input.
 inpS :: DeepArrow (~>) => ((a,b) -> c) ~> (b -> (a->c))
-inpS = curryA >>> flipA
+inpS = flipA . curryA
 
 
 -- | Given a way to extract a @d@ input from an @a@ input, leaving an @a'@
@@ -170,11 +169,9 @@ inpSecond  ::  DeepArrow (~>) =>
 
 -- See ICFP 07 paper for the derivation of inpFirst and inpSecond
 
-inpFirst  h =  curryA >>> flipA >>> result h >>> flipA >>>
-               result (flipA>>>uncurryA)
+inpFirst  h = result (uncurryA . flipA) . flipA . result h . flipA . curryA 
 
-inpSecond h =  curryA >>> result h >>> flipA >>>
-               result uncurryA
+inpSecond h = result uncurryA . flipA . result h . curryA 
 
 
 {----------------------------------------------------------
@@ -187,7 +184,7 @@ flipA = funR
 
 -- | Like 'unzip' but for 'DeepArrow' arrows instead of lists.
 unzipA :: DeepArrow (~>) => (a ~> (b,c)) -> (a ~> b, a ~> c)
-unzipA f = (f >>> fstA, f >>> sndA)
+unzipA f = (fstA . f, sndA . f)
 
 
 {----------------------------------------------------------
@@ -198,7 +195,7 @@ instance DeepArrow (->) where
   result   = (.)
   -- argument = flip (.)
   -- Since (->) implements 'arr', use the recommended defaults for the rest.
-  idA      = arr id
+  -- idA      = arr id
   fstA     = arr fst
   dupA     = arr (\x->(x,x))
   sndA     = arr snd
@@ -214,22 +211,21 @@ instance DeepArrow (->) where
 -- DeepArrow "pairs" are deep arrows
 
 instance (DeepArrow ar, DeepArrow ar') => DeepArrow (ar ::*:: ar') where
-  idA      = Prodd (idA,      idA)
-  dupA     = Prodd (dupA,     dupA)
-  fstA     = Prodd (fstA,     fstA)
-  sndA     = Prodd (sndA,     sndA)
-  funF     = Prodd (funF,     funF)
-  funS     = Prodd (funS,     funS)
-  funR     = Prodd (funR,     funR)
-  curryA   = Prodd (curryA,   curryA)
-  uncurryA = Prodd (uncurryA, uncurryA)
-  swapA    = Prodd (swapA,    swapA)
-  lAssocA  = Prodd (lAssocA,  lAssocA)
-  rAssocA  = Prodd (rAssocA,  rAssocA)
+  dupA     = dupA     *::*     dupA
+  fstA     = fstA     *::*     fstA
+  sndA     = sndA     *::*     sndA
+  funF     = funF     *::*     funF
+  funS     = funS     *::*     funS
+  funR     = funR     *::*     funR
+  curryA   = curryA   *::*   curryA
+  uncurryA = uncurryA *::* uncurryA
+  swapA    = swapA    *::*    swapA
+  lAssocA  = lAssocA  *::*  lAssocA
+  rAssocA  = rAssocA  *::*  rAssocA
 
   result = inProdd (result *** result)
-  -- result   (Prodd (f,f')) = Prodd (result   f, result   f')
 
+  -- idA      = idA      *::*      idA
   -- composeA = Prodd (composeA, composeA)
   -- argument (Prodd (f,f')) = Prodd (argument f, argument f')
 
@@ -253,7 +249,7 @@ class FunAble h => FunDble h where
 
 instance FunDble h => DeepArrow (FunA h) where
   result   = inFunA resultFun
-  idA      = FunA id
+  -- idA      = FunA id
   dupA     = FunA dupAFun
   fstA     = FunA fstAFun
   sndA     = FunA sndAFun
@@ -286,4 +282,4 @@ instance FunDble h => DeepArrow (FunA h) where
 
 -- -- | Pre- and post-processing
 -- (~>) :: DeepArrow (-->) => (a' --> a) -> (b --> b') -> ((a -> b) --> (a' -> b'))
--- f ~> h = result h >>> argument f
+-- f ~> h = result h . argument f
