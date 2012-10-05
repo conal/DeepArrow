@@ -1,5 +1,5 @@
 Name:			DeepArrow
-Version:		0.3.6
+Version:		0.3.7
 Synopsis:		Arrows for "deep application"
 Category:               Combinators, Control
 Cabal-Version:          >= 1.6
