@@ -4,7 +4,7 @@
 ----------------------------------------------------------------------
 -- |
 -- Module      :  Control.Arrow.DeepArrow
--- Copyright   :  (c) Conal Elliott 2006
+-- Copyright   :  (c) Conal Elliott 2006-2013
 -- License     :  BSD3
 -- 
 -- Maintainer  :  conal@conal.net
@@ -80,43 +80,43 @@ defaults do not use 'arr'.
 
 -}
 
-class Arrow (~>) => DeepArrow (~>) where
+class Arrow ar => DeepArrow ar where
   -- | Direct arrow into a function's result.  Analogous to 'first' and
   -- 'second'.
-  result :: (b ~> b') -> ((a->b) ~> (a->b'))
+  result :: (b `ar` b') -> ((a->b) `ar` (a->b'))
   -- Complicates OFun considerably and not used.
   -- Direct arrow into a function's argument.  Note contravariance.
-  -- argument :: (a' ~> a ) -> ((a->b) ~> (a'->b))
+  -- argument :: (a' `ar` a ) -> ((a->b) `ar` (a'->b))
 --   -- | Identity. Unnecessary now that we have Category 
---   idA :: a ~> a
+--   idA :: a `ar` a
 --   idA = id
   -- | Duplicate.
-  dupA :: a ~> (a,a)
+  dupA :: a `ar` (a,a)
   -- | Extract first.
-  fstA :: (a,b) ~> a
+  fstA :: (a,b) `ar` a
   -- | Extract second.
-  sndA :: (a,b) ~> b
+  sndA :: (a,b) `ar` b
   -- | Extract function from first element.
-  funF :: (c->a, b) ~> (c->(a,b))
+  funF :: (c->a, b) `ar` (c->(a,b))
   -- | Extract function from second element.
-  funS :: (a, c->b) ~> (c->(a,b))  -- Could default via swapA & funF
+  funS :: (a, c->b) `ar` (c->(a,b))  -- Could default via swapA & funF
   -- | Extract function from result.
-  funR :: (a->c->b) ~> (c->a->b)
+  funR :: (a->c->b) `ar` (c->a->b)
   -- | Curry arrow.
-  curryA :: ((a,b)->c) ~> (a->b->c)
+  curryA :: ((a,b)->c) `ar` (a->b->c)
   -- | Uncurry arrow.
-  uncurryA :: (a->b->c)  ~> ((a,b)->c)
+  uncurryA :: (a->b->c)  `ar` ((a,b)->c)
   -- | Swap elements.  Has default.
-  swapA :: (a,b) ~> (b,a)
+  swapA :: (a,b) `ar` (b,a)
   swapA = sndA &&& fstA
   -- | Left-associate.  Has default.
-  lAssocA :: (a,(b,c)) ~> ((a,b),c)
+  lAssocA :: (a,(b,c)) `ar` ((a,b),c)
   lAssocA = second fstA &&& (sndA . sndA)
   -- | Right-associate.  Has default.
-  rAssocA :: ((a,b),c) ~> (a,(b,c))
+  rAssocA :: ((a,b),c) `ar` (a,(b,c))
   rAssocA = (fstA . fstA) &&& first  sndA
   -- I don't think this one is used.
-  -- composeA :: Arrow (~~>) => (a ~~> b, b ~~> c) ~> (a ~~>c)
+  -- composeA :: Arrow (~`ar`) => (a ~`ar` b, b ~`ar` c) `ar` (a ~`ar`c)
   -- composeA = arr (uncurry (>>>))
 
 
@@ -126,15 +126,15 @@ class Arrow (~>) => DeepArrow (~>) where
 
 -- | Promote a function extractor into one that reaches into the first
 -- element of a pair.
-funFirst   :: DeepArrow (~>) => (a ~> (d->a')) -> ((a,b) ~> (d->(a',b)))
+funFirst   :: DeepArrow ar => (a `ar` (d->a')) -> ((a,b) `ar` (d->(a',b)))
 
 -- | Promote a function extractor into one that reaches into the second
 -- element of a pair.
-funSecond  :: DeepArrow (~>) => (b ~> (d->b')) -> ((a,b) ~> (d->(a,b')))
+funSecond  :: DeepArrow ar => (b `ar` (d->b')) -> ((a,b) `ar` (d->(a,b')))
 
 -- | Promote a function extractor into one that reaches into the result
 -- element of a function.
-funResult  :: DeepArrow (~>) => (b ~> (d->b')) -> ((a->b) ~> (d->(a->b')))
+funResult  :: DeepArrow ar => (b `ar` (d->b')) -> ((a->b) `ar` (d->(a->b')))
 
 funFirst  h = funF . first  h
 funSecond h = funS . second h
@@ -146,25 +146,25 @@ funResult h = funR . result h
 ----------------------------------------------------------}
 
 -- | Extract the first component of a pair input.
-inpF :: DeepArrow (~>) => ((a,b) -> c) ~> (a -> (b->c))
+inpF :: DeepArrow ar => ((a,b) -> c) `ar` (a -> (b->c))
 inpF = curryA
 
 -- | Extract the second component of a pair input.
-inpS :: DeepArrow (~>) => ((a,b) -> c) ~> (b -> (a->c))
+inpS :: DeepArrow ar => ((a,b) -> c) `ar` (b -> (a->c))
 inpS = flipA . curryA
 
 
 -- | Given a way to extract a @d@ input from an @a@ input, leaving an @a'@
 -- residual input, 'inpFirst' yields a way to extract a @d@ input from an
 -- @(a,b)@ input, leaving an @(a',b)@ residual input.
-inpFirst   ::  DeepArrow (~>) =>
-               (( a   ->c) ~> (d -> ( a'   ->c)))
-           ->  (((a,b)->c) ~> (d -> ((a',b)->c)))
+inpFirst   ::  DeepArrow ar =>
+               (( a   ->c) `ar` (d -> ( a'   ->c)))
+           ->  (((a,b)->c) `ar` (d -> ((a',b)->c)))
 
 -- | Analogous to 'inpFirst'.
-inpSecond  ::  DeepArrow (~>) =>
-               ((   b ->c) ~> (d -> (   b' ->c)))
-           ->  (((a,b)->c) ~> (d -> ((a,b')->c)))
+inpSecond  ::  DeepArrow ar =>
+               ((   b ->c) `ar` (d -> (   b' ->c)))
+           ->  (((a,b)->c) `ar` (d -> ((a,b')->c)))
 
 
 -- See ICFP 07 paper for the derivation of inpFirst and inpSecond
@@ -179,11 +179,11 @@ inpSecond h = result uncurryA . flipA . result h . curryA
 ----------------------------------------------------------}
 
 -- | Flip argument order
-flipA :: DeepArrow (~>) => (a->c->b)  ~> (c->a->b)
+flipA :: DeepArrow ar => (a->c->b)  `ar` (c->a->b)
 flipA = funR
 
 -- | Like 'unzip' but for 'DeepArrow' arrows instead of lists.
-unzipA :: DeepArrow (~>) => (a ~> (b,c)) -> (a ~> b, a ~> c)
+unzipA :: DeepArrow ar => (a `ar` (b,c)) -> (a `ar` b, a `ar` c)
 unzipA f = (fstA . f, sndA . f)
 
 
@@ -276,10 +276,10 @@ instance FunDble h => DeepArrow (FunA h) where
 ----------------------------------------------------------}
 
 -- | Compose wrapped functions
-(->|) :: (DeepArrow (~>), FunArr (~>) w)
+(->|) :: (DeepArrow ar, FunArr ar w)
       => w (a->b) -> w (b->c) -> w (a->c)
 (->|) f g = result (toArr g) $$ f
 
 -- -- | Pre- and post-processing
--- (~>) :: DeepArrow (-->) => (a' --> a) -> (b --> b') -> ((a -> b) --> (a' -> b'))
--- f ~> h = result h . argument f
+-- ar :: DeepArrow (-->) => (a' --> a) -> (b --> b') -> ((a -> b) --> (a' -> b'))
+-- f `ar` h = result h . argument f

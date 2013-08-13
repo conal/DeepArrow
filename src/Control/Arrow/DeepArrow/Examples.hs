@@ -5,7 +5,7 @@
 ----------------------------------------------------------------------
 -- |
 -- Module      :  Control.Arrow.DeepArrow.Examples
--- Copyright   :  (c) Conal Elliott 2007
+-- Copyright   :  (c) Conal Elliott 2007-2013
 -- License     :  BSD3
 -- 
 -- Maintainer  :  conal@conal.net
@@ -43,9 +43,9 @@ import Control.Arrow.DeepArrow
 -- just the @c@ part and leave the rest intact.
 -- 
 -- @deep = 'first' . 'result' . 'second' . 'result' . 'first' @
-deep :: DeepArrow (~>) => (c ~> c') ->
-        (a -> (f,b -> (c ,g)),e)
-     ~> (a -> (f,b -> (c',g)),e)
+deep :: DeepArrow ar => (c `ar` c') ->
+          (a -> (f,b -> (c ,g)),e)
+     `ar` (a -> (f,b -> (c',g)),e)
 deep = first.result.second.result.first
 
 
@@ -59,18 +59,18 @@ deep = first.result.second.result.first
 -- 
 -- @extF = 'funFirst' . 'funResult' . 'funSecond'@
 
-extF :: DeepArrow (~>) => (d ~> (c -> b)) ->
-              (e -> (a,d), f)
-     ~> (c -> (e -> (a,b), f))
+extF :: DeepArrow ar => (d `ar` (c -> b)) ->
+                (e -> (a,d), f)
+     `ar` (c -> (e -> (a,b), f))
 extF = funFirst.funResult.funSecond
 
 -- | To make an extractor, simply apply the extractor-transformer 'extF'
 -- to the identity arrow.
 -- 
 -- @'extFF' = 'extF' 'idA'@
-extFF :: DeepArrow (~>) =>
-               (e -> (a,(c-> b)),f)
-      ~> (c -> (e -> (a,     b),f))
+extFF :: DeepArrow ar =>
+                 (e -> (a,(c-> b)),f)
+      `ar` (c -> (e -> (a,     b),f))
 extFF = extF id
 
 
@@ -81,9 +81,9 @@ extFF = extF id
 -- | Extract a @b@ input from a @((a,(b,e)),c)@ argument.
 -- 
 -- @extI = ('inpFirst' . 'inpSecond') 'inpF'@
-extI :: DeepArrow (~>) =>
-         (     ((a,(b,e)),c) -> d)
-     ~>  (b -> ((a,   e ),c) -> d)
+extI :: DeepArrow ar =>
+          (     ((a,(b,e)),c) -> d)
+     `ar` (b -> ((a,   e ),c) -> d)
 extI = (inpFirst.inpSecond) inpF
 
 
@@ -91,7 +91,7 @@ extI = (inpFirst.inpSecond) inpF
 -- For instance, combine 'extF' and 'extI'.
 -- 
 -- @extFI = 'extF' 'extI'@
-extFI :: DeepArrow (~>) =>
-               (e -> (g,(((a,(b,e)),c) -> d)), f)
-      ~> (b -> (e -> (g,(((a,   e) ,c) -> d)), f))
+extFI :: DeepArrow ar =>
+                 (e -> (g,(((a,(b,e)),c) -> d)), f)
+      `ar` (b -> (e -> (g,(((a,   e) ,c) -> d)), f))
 extFI = extF extI

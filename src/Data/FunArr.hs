@@ -7,7 +7,7 @@
 ----------------------------------------------------------------------
 -- |
 -- Module      :  Data.FunArr
--- Copyright   :  (c) Conal Elliott 2007
+-- Copyright   :  (c) Conal Elliott 2007-2013
 -- License     :  BSD3
 -- 
 -- Maintainer  :  conal@conal.net
@@ -31,14 +31,14 @@ infixr 0  $$  -- FunArr application
 -- | Convert between an arrow value and a \"wrapped function\".  The \"arrow\"
 -- doesn't really have to be an arrow.  I'd appreciate ideas for names &
 -- uses.
-class FunArr (~>) w | (~>)->w , w->(~>) where
+class FunArr ar w | ar->w , w->ar where
   -- | Convert a @w@-wrapped function to an arrow value
-  toArr :: w (a->b) -> (a ~> b)
+  toArr :: w (a->b) -> (a `ar` b)
   -- | Apply an arrow to a @w@-wrapped value
-  ($$)  :: (a ~> b) -> w a -> w b
+  ($$)  :: (a `ar` b) -> w a -> w b
 
 -- -- | Apply a wrapped function to a wrapped value
--- wapl :: FunArr (~>) w => w (a->b) -> w a -> w b
+-- wapl :: FunArr ar w => w (a->b) -> w a -> w b
 -- wapl f a = toArr f $$ a
 
 -- The type of wapl matches <*> from Control.Applicative.  What about
